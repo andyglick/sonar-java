@@ -99,7 +99,7 @@ public class SubClassStaticReferenceCheck extends IssuableSubscriptionVisitor {
     @Override
     public void visitIdentifier(IdentifierTree tree) {
       Type type = tree.symbolType();
-      if (!classType.equals(type) && type.isSubtypeOf(classType)) {
+      if (!classType.is(type.fullyQualifiedName()) && type.isSubtypeOf(classType)) {
         reportIssue(tree, String.format("Remove this reference to \"%s\".", type.symbol().name()));
       }
     }

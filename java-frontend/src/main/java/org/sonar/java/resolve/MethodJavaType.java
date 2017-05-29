@@ -19,6 +19,8 @@
  */
 package org.sonar.java.resolve;
 
+import org.sonar.plugins.java.api.semantic.Type;
+
 import javax.annotation.Nullable;
 
 import java.util.List;
@@ -30,17 +32,34 @@ public class MethodJavaType extends JavaType {
   @Nullable
   JavaType resultType;
   List<JavaType> thrown;
+  private final boolean isConstructor;
 
   public MethodJavaType(List<JavaType> argTypes, @Nullable JavaType resultType, List<JavaType> thrown, JavaSymbol.TypeJavaSymbol symbol) {
     super(METHOD, symbol);
     this.argTypes = argTypes;
     this.resultType = resultType;
     this.thrown = thrown;
+    this.isConstructor = resultType == null;
   }
 
   @Override
   public String toString() {
-    return resultType == null ? "constructor" : ("returns " + resultType.toString());
+    return isConstructor ? "constructor" : ("returns " + resultType.toString());
+  }
+
+  @Override
+  public boolean is(String fullyQualifiedName) {
+    return isConstructor ? super.is(fullyQualifiedName) : resultType.is(fullyQualifiedName);
+  }
+
+  @Override
+  public boolean isSubtypeOf(Type superType) {
+    return isConstructor ? super.isSubtypeOf(superType) : resultType.isSubtypeOf(superType);
+  }
+
+  @Override
+  public boolean isSubtypeOf(String fullyQualifiedName) {
+    return isConstructor ? super.isSubtypeOf(fullyQualifiedName) : resultType.isSubtypeOf(fullyQualifiedName);
   }
 
   @Nullable
