@@ -17,43 +17,20 @@
  * along with this program; if not, write to the Free Software Foundation,
  * Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
-package org.sonar.java.ast.parser.grammar.units;
+package org.sonar.java.ast.parser.grammar.moduledirectives;
 
-import com.google.common.base.Joiner;
 import org.junit.Test;
 import org.sonar.java.ast.parser.JavaLexer;
 
 import static org.sonar.sslr.tests.Assertions.assertThat;
 
-public class CompilationUnitTest {
+public class UsesDirectiveTest {
 
   @Test
-  public void realLife() {
-    assertThat(JavaLexer.COMPILATION_UNIT)
-      // Ordinary Compilation Unit
-      .matches(lines(
-        "package org.example;",
-        "",
-        "public class HelloWorld {",
-        "  public static void main(String[] args) {",
-        "    System.out.println(\"Hello World!\");",
-        "  }",
-        "}"))
-      // Modular Compilation Unit
-      .matches(lines(
-        "import com.google.common.annotations.Beta;",
-        "",
-        "@Beta",
-        "open module com.greetings {",
-        "  requires transitive org.foo.bar;",
-        "  exports foo.bar to com.module1, gul.bar.qix;",
-        "  opens gul.lom to moc.loe.module2, ahah.bro.force;",
-        "  uses bar.foo.MyInterface;",
-        "}"));
-  }
-
-  private static String lines(String... lines) {
-    return Joiner.on("\n").join(lines);
+  public void simple() {
+    assertThat(JavaLexer.USES_DIRECTIVE)
+      .matches("uses Greetings ;")
+      .matches("uses com.Greetings;");
   }
 
 }

@@ -404,6 +404,11 @@ public class BaseTreeVisitor implements TreeVisitor {
   }
 
   @Override
+  public void visitUsesDirective(UsesDirectiveTree tree) {
+    scan(tree.typeName());
+  }
+
+  @Override
   public void visitArrayDimension(ArrayDimensionTree tree) {
     scan(tree.annotations());
     scan(tree.expression());

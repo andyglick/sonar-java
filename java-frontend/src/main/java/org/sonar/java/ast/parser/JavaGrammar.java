@@ -170,7 +170,8 @@ public class JavaGrammar {
       .is(b.firstOf(
         REQUIRES_MODULE_DIRECTIVE(),
         EXPORTS_MODULE_DIRECTIVE(),
-        OPENS_MODULE_DIRECTIVE()));
+        OPENS_MODULE_DIRECTIVE(),
+        USES_MODULE_DIRECTIVE()));
   }
 
   public ModuleDirectiveTree REQUIRES_MODULE_DIRECTIVE() {
@@ -217,6 +218,15 @@ public class JavaGrammar {
             f.newModuleNames2(
               b.token(JavaRestrictedKeyword.TO),
               QUALIFIED_IDENTIFIER_LIST())),
+          b.token(JavaPunctuator.SEMI)));
+  }
+
+  public ModuleDirectiveTree USES_MODULE_DIRECTIVE() {
+    return b.<ModuleDirectiveTree>nonterminal(JavaLexer.USES_DIRECTIVE)
+      .is(
+        f.newUsesModuleDirective(
+          b.token(JavaRestrictedKeyword.USES),
+          TYPE_QUALIFIED_IDENTIFIER(),
           b.token(JavaPunctuator.SEMI)));
   }
 

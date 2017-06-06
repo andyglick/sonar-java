@@ -145,5 +145,7 @@ public interface TreeVisitor {
 
   void visitOpensDirective(OpensDirectiveTree tree);
 
+  void visitUsesDirective(UsesDirectiveTree tree);
+
   void visitArrayDimension(ArrayDimensionTree tree);
 }

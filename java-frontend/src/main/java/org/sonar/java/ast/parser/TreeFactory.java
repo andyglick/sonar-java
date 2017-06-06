@@ -49,6 +49,7 @@ import org.sonar.java.model.declaration.ModifiersTreeImpl;
 import org.sonar.java.model.declaration.ModuleDeclarationTreeImpl;
 import org.sonar.java.model.declaration.OpensDirectiveTreeImpl;
 import org.sonar.java.model.declaration.RequiresDirectiveTreeImpl;
+import org.sonar.java.model.declaration.UsesDirectiveTreeImpl;
 import org.sonar.java.model.declaration.VariableTreeImpl;
 import org.sonar.java.model.expression.ArrayAccessExpressionTreeImpl;
 import org.sonar.java.model.expression.AssignmentExpressionTreeImpl;
@@ -238,6 +239,10 @@ public class TreeFactory {
       quialifiedModuleNames = toModuleNames.second();
     }
     return new OpensDirectiveTreeImpl(opensKeyword, packageName, toKeyword, quialifiedModuleNames, semicolonToken);
+  }
+
+  public ModuleDirectiveTree newUsesModuleDirective(InternalSyntaxToken usesKeyword, TypeTree typeName, InternalSyntaxToken semicolonToken) {
+    return new UsesDirectiveTreeImpl(usesKeyword, typeName, semicolonToken);
   }
 
   public <T, U> Tuple<T, U> newModuleNames2(T toToken, U moduleNames) {
