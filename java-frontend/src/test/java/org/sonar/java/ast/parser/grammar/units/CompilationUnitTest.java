@@ -45,6 +45,7 @@ public class CompilationUnitTest {
         "",
         "@Beta",
         "open module com.greetings {",
+        "  requires transitive org.foo.bar;",
         "}"));
   }
 

@@ -24,6 +24,7 @@ import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Maps;
 import org.sonar.java.ast.api.JavaKeyword;
 import org.sonar.java.ast.api.JavaPunctuator;
+import org.sonar.java.ast.api.JavaRestrictedKeyword;
 import org.sonar.java.ast.api.JavaTokenType;
 import org.sonar.plugins.java.api.tree.Modifier;
 import org.sonar.plugins.java.api.tree.Tree;
@@ -33,7 +34,7 @@ import java.util.Map;
 
 public final class KindMaps {
 
-  private final Map<JavaKeyword, Modifier> modifiers = Maps.newEnumMap(JavaKeyword.class);
+  private final Map<GrammarRuleKey, Modifier> modifiers;
   private final Map<JavaPunctuator, Tree.Kind> prefixOperators = Maps.newEnumMap(JavaPunctuator.class);
   private final Map<JavaPunctuator, Tree.Kind> postfixOperators = Maps.newEnumMap(JavaPunctuator.class);
   private final Map<JavaPunctuator, Tree.Kind> binaryOperators = Maps.newEnumMap(JavaPunctuator.class);
@@ -53,18 +54,21 @@ public final class KindMaps {
     literalsBuilder.put(JavaKeyword.NULL, Tree.Kind.NULL_LITERAL);
     this.literals = literalsBuilder.build();
 
-    modifiers.put(JavaKeyword.PUBLIC, Modifier.PUBLIC);
-    modifiers.put(JavaKeyword.PROTECTED, Modifier.PROTECTED);
-    modifiers.put(JavaKeyword.PRIVATE, Modifier.PRIVATE);
-    modifiers.put(JavaKeyword.ABSTRACT, Modifier.ABSTRACT);
-    modifiers.put(JavaKeyword.STATIC, Modifier.STATIC);
-    modifiers.put(JavaKeyword.FINAL, Modifier.FINAL);
-    modifiers.put(JavaKeyword.TRANSIENT, Modifier.TRANSIENT);
-    modifiers.put(JavaKeyword.VOLATILE, Modifier.VOLATILE);
-    modifiers.put(JavaKeyword.SYNCHRONIZED, Modifier.SYNCHRONIZED);
-    modifiers.put(JavaKeyword.NATIVE, Modifier.NATIVE);
-    modifiers.put(JavaKeyword.DEFAULT, Modifier.DEFAULT);
-    modifiers.put(JavaKeyword.STRICTFP, Modifier.STRICTFP);
+    ImmutableMap.Builder<GrammarRuleKey, Modifier> modifiersBuilder = ImmutableMap.builder();
+    modifiersBuilder.put(JavaKeyword.PUBLIC, Modifier.PUBLIC);
+    modifiersBuilder.put(JavaKeyword.PROTECTED, Modifier.PROTECTED);
+    modifiersBuilder.put(JavaKeyword.PRIVATE, Modifier.PRIVATE);
+    modifiersBuilder.put(JavaKeyword.ABSTRACT, Modifier.ABSTRACT);
+    modifiersBuilder.put(JavaKeyword.STATIC, Modifier.STATIC);
+    modifiersBuilder.put(JavaKeyword.FINAL, Modifier.FINAL);
+    modifiersBuilder.put(JavaKeyword.TRANSIENT, Modifier.TRANSIENT);
+    modifiersBuilder.put(JavaKeyword.VOLATILE, Modifier.VOLATILE);
+    modifiersBuilder.put(JavaKeyword.SYNCHRONIZED, Modifier.SYNCHRONIZED);
+    modifiersBuilder.put(JavaKeyword.NATIVE, Modifier.NATIVE);
+    modifiersBuilder.put(JavaKeyword.DEFAULT, Modifier.DEFAULT);
+    modifiersBuilder.put(JavaKeyword.STRICTFP, Modifier.STRICTFP);
+    modifiersBuilder.put(JavaRestrictedKeyword.TRANSITIVE, Modifier.TRANSITIVE);
+    this.modifiers = modifiersBuilder.build();
 
     prefixOperators.put(JavaPunctuator.INC, Tree.Kind.PREFIX_INCREMENT);
     prefixOperators.put(JavaPunctuator.DEC, Tree.Kind.PREFIX_DECREMENT);
@@ -111,8 +115,8 @@ public final class KindMaps {
     assignmentOperators.put(JavaPunctuator.OREQU, Tree.Kind.OR_ASSIGNMENT);
   }
 
-  public Modifier getModifier(JavaKeyword keyword) {
-    return Preconditions.checkNotNull(modifiers.get(keyword), "Mapping not found for modifier %s", keyword);
+  public Modifier getModifier(GrammarRuleKey modifier) {
+    return Preconditions.checkNotNull(modifiers.get(modifier), "Mapping not found for modifier %s", modifier);
   }
 
   public Tree.Kind getPrefixOperator(JavaPunctuator punctuator) {

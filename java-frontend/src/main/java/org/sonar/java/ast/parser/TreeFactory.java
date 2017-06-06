@@ -46,6 +46,7 @@ import org.sonar.java.model.declaration.MethodTreeImpl;
 import org.sonar.java.model.declaration.ModifierKeywordTreeImpl;
 import org.sonar.java.model.declaration.ModifiersTreeImpl;
 import org.sonar.java.model.declaration.ModuleDeclarationTreeImpl;
+import org.sonar.java.model.declaration.RequiresDirectiveTreeImpl;
 import org.sonar.java.model.declaration.VariableTreeImpl;
 import org.sonar.java.model.expression.ArrayAccessExpressionTreeImpl;
 import org.sonar.java.model.expression.AssignmentExpressionTreeImpl;
@@ -92,8 +93,10 @@ import org.sonar.plugins.java.api.tree.ExpressionTree;
 import org.sonar.plugins.java.api.tree.IdentifierTree;
 import org.sonar.plugins.java.api.tree.ImportClauseTree;
 import org.sonar.plugins.java.api.tree.ListTree;
+import org.sonar.plugins.java.api.tree.Modifier;
 import org.sonar.plugins.java.api.tree.ModifierTree;
 import org.sonar.plugins.java.api.tree.ModuleDeclarationTree;
+import org.sonar.plugins.java.api.tree.ModuleDirectiveTree;
 import org.sonar.plugins.java.api.tree.PackageDeclarationTree;
 import org.sonar.plugins.java.api.tree.ParameterizedTypeTree;
 import org.sonar.plugins.java.api.tree.StatementTree;
@@ -123,8 +126,7 @@ public class TreeFactory {
   }
 
   public ModifierKeywordTreeImpl modifierKeyword(InternalSyntaxToken token) {
-    JavaKeyword keyword = (JavaKeyword) token.getGrammarRuleKey();
-    return new ModifierKeywordTreeImpl(kindMaps.getModifier(keyword), token);
+    return new ModifierKeywordTreeImpl(kindMaps.getModifier(token.getGrammarRuleKey()), token);
   }
 
   // Literals
@@ -177,12 +179,35 @@ public class TreeFactory {
   }
 
   public ModuleDeclarationTree newModuleDeclaration(Optional<List<AnnotationTreeImpl>> annotations, Optional<InternalSyntaxToken> openToken, InternalSyntaxToken moduleToken,
-    ExpressionTree qualifiedIdentifier, InternalSyntaxToken openBraceToken, InternalSyntaxToken closeBraceToken) {
+    ExpressionTree qualifiedIdentifier, InternalSyntaxToken openBraceToken, Optional<List<ModuleDirectiveTree>> moduleDirectives, InternalSyntaxToken closeBraceToken) {
     List<AnnotationTree> annotationList = Collections.emptyList();
     if (annotations.isPresent()) {
       annotationList = Collections.unmodifiableList(annotations.get());
     }
-    return new ModuleDeclarationTreeImpl(annotationList, openToken.orNull(), moduleToken, qualifiedIdentifier, openBraceToken, Collections.emptyList(), closeBraceToken);
+    List<ModuleDirectiveTree> moduleDirectiveList = Collections.emptyList();
+    if (moduleDirectives.isPresent()) {
+      moduleDirectiveList = ImmutableList.<ModuleDirectiveTree>builder().addAll(moduleDirectives.get()).build();
+    }
+
+    return new ModuleDeclarationTreeImpl(annotationList, openToken.orNull(), moduleToken, qualifiedIdentifier, openBraceToken, moduleDirectiveList, closeBraceToken);
+  }
+
+  public ModuleDirectiveTree newRequiresModuleDirective(InternalSyntaxToken requiresToken, InternalSyntaxToken transitiveTokenAsModuleName, InternalSyntaxToken semicolonToken) {
+    IdentifierTreeImpl moduleName = new IdentifierTreeImpl(transitiveTokenAsModuleName);
+    return newRequiresModuleDirective(requiresToken, ModifiersTreeImpl.emptyModifiers(), moduleName, semicolonToken);
+  }
+
+  public ModuleDirectiveTree newRequiresModuleDirective(InternalSyntaxToken requiresToken, InternalSyntaxToken staticModifier, InternalSyntaxToken transitiveTokenAsModuleName,
+    InternalSyntaxToken semicolonToken) {
+    ModifierKeywordTreeImpl staticModifierTree = new ModifierKeywordTreeImpl(Modifier.STATIC, staticModifier);
+    ModifiersTreeImpl modifiers = new ModifiersTreeImpl(Collections.singletonList(staticModifierTree));
+    IdentifierTreeImpl moduleName = new IdentifierTreeImpl(transitiveTokenAsModuleName);
+    return newRequiresModuleDirective(requiresToken, modifiers, moduleName, semicolonToken);
+  }
+
+  public ModuleDirectiveTree newRequiresModuleDirective(InternalSyntaxToken requiresToken, ModifiersTreeImpl modifiers, ExpressionTree moduleName,
+    InternalSyntaxToken semicolonToken) {
+    return new RequiresDirectiveTreeImpl(requiresToken, modifiers, moduleName, semicolonToken);
   }
 
   public ImportClauseTree newEmptyImport(InternalSyntaxToken semicolonToken) {
@@ -1924,4 +1949,5 @@ public class TreeFactory {
       ((PrimitiveTypeTreeImpl) type).complete(typeAnnotations);
     }
   }
+
 }

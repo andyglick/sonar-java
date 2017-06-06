@@ -44,7 +44,8 @@ public class ModifiersTest {
       .matches("transient")
       .matches("volatile")
       .matches("strictfp")
-      .matches("@NotNull public static @Nullable final");
+      .matches("@NotNull public static @Nullable final")
+      .matches("transitive");
   }
 
 }

@@ -138,5 +138,7 @@ public interface TreeVisitor {
 
   void visitModule(ModuleDeclarationTree module);
 
+  void visitRequiresDirectiveTree(RequiresDirectiveTree tree);
+
   void visitArrayDimension(ArrayDimensionTree tree);
 }

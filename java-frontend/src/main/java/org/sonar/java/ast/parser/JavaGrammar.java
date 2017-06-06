@@ -68,6 +68,7 @@ import org.sonar.plugins.java.api.tree.ExpressionTree;
 import org.sonar.plugins.java.api.tree.ImportClauseTree;
 import org.sonar.plugins.java.api.tree.ModifierTree;
 import org.sonar.plugins.java.api.tree.ModuleDeclarationTree;
+import org.sonar.plugins.java.api.tree.ModuleDirectiveTree;
 import org.sonar.plugins.java.api.tree.PackageDeclarationTree;
 import org.sonar.plugins.java.api.tree.StatementTree;
 import org.sonar.plugins.java.api.tree.Tree;
@@ -113,7 +114,8 @@ public class JavaGrammar {
           b.token(JavaKeyword.SYNCHRONIZED),
           b.token(JavaKeyword.NATIVE),
           b.token(JavaKeyword.DEFAULT),
-          b.token(JavaKeyword.STRICTFP))));
+          b.token(JavaKeyword.STRICTFP),
+          b.token(JavaRestrictedKeyword.TRANSITIVE))));
   }
 
   // Literals
@@ -159,8 +161,35 @@ public class JavaGrammar {
           b.token(JavaRestrictedKeyword.MODULE),
           EXPRESSION_QUALIFIED_IDENTIFIER(),
           b.token(JavaPunctuator.LWING),
-          // TODO add module directives
+          b.zeroOrMore(MODULE_DIRECTIVE()),
           b.token(JavaPunctuator.RWING)));
+  }
+
+  public ModuleDirectiveTree MODULE_DIRECTIVE() {
+    return b.<ModuleDirectiveTree>nonterminal(JavaLexer.MODULE_DIRECTIVE)
+      .is(b.firstOf(
+        REQUIRES_MODULE_DIRECTIVE()));
+  }
+
+  public ModuleDirectiveTree REQUIRES_MODULE_DIRECTIVE() {
+    return b.<ModuleDirectiveTree>nonterminal(JavaLexer.REQUIRES_DIRECTIVE)
+      .is(b.firstOf(
+        // JLS9 - §3.9 : 'transitive' restricted keyword can be used as module name instead of modifier
+        f.newRequiresModuleDirective(
+          b.token(JavaRestrictedKeyword.REQUIRES),
+          b.token(JavaRestrictedKeyword.TRANSITIVE),
+          b.token(JavaPunctuator.SEMI)),
+        f.newRequiresModuleDirective(
+          b.token(JavaRestrictedKeyword.REQUIRES),
+          b.token(JavaKeyword.STATIC),
+          b.token(JavaRestrictedKeyword.TRANSITIVE),
+          b.token(JavaPunctuator.SEMI)),
+        // ordinary requires directives
+        f.newRequiresModuleDirective(
+          b.token(JavaRestrictedKeyword.REQUIRES),
+          MODIFIERS(),
+          EXPRESSION_QUALIFIED_IDENTIFIER(),
+          b.token(JavaPunctuator.SEMI))));
   }
 
   public PackageDeclarationTree PACKAGE_DECLARATION() {
