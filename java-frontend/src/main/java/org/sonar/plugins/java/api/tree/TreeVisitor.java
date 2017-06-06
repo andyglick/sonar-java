@@ -143,5 +143,7 @@ public interface TreeVisitor {
 
   void visitExportsDirectiveTree(ExportsDirectiveTree tree);
 
+  void visitOpensDirective(OpensDirectiveTree tree);
+
   void visitArrayDimension(ArrayDimensionTree tree);
 }

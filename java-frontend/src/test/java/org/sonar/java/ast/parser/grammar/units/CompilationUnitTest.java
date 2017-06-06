@@ -47,6 +47,7 @@ public class CompilationUnitTest {
         "open module com.greetings {",
         "  requires transitive org.foo.bar;",
         "  exports foo.bar to com.module1, gul.bar.qix;",
+        "  opens gul.lom to moc.loe.module2, ahah.bro.force;",
         "}"));
   }
 

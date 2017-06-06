@@ -47,6 +47,7 @@ import org.sonar.java.model.declaration.MethodTreeImpl;
 import org.sonar.java.model.declaration.ModifierKeywordTreeImpl;
 import org.sonar.java.model.declaration.ModifiersTreeImpl;
 import org.sonar.java.model.declaration.ModuleDeclarationTreeImpl;
+import org.sonar.java.model.declaration.OpensDirectiveTreeImpl;
 import org.sonar.java.model.declaration.RequiresDirectiveTreeImpl;
 import org.sonar.java.model.declaration.VariableTreeImpl;
 import org.sonar.java.model.expression.ArrayAccessExpressionTreeImpl;
@@ -224,6 +225,22 @@ public class TreeFactory {
   }
 
   public <T, U> Tuple<T, U> newModuleNames(T toToken, U moduleNames) {
+    return newTuple(toToken, moduleNames);
+  }
+
+  public ModuleDirectiveTree newOpensModuleDirective(InternalSyntaxToken opensKeyword, ExpressionTree packageName,
+    Optional<Tuple<InternalSyntaxToken, QualifiedIdentifierListTreeImpl>> moduleNames, InternalSyntaxToken semicolonToken) {
+    InternalSyntaxToken toKeyword = null;
+    ListTreeImpl<TypeTree> quialifiedModuleNames = QualifiedIdentifierListTreeImpl.emptyList();
+    if (moduleNames.isPresent()) {
+      Tuple<InternalSyntaxToken, QualifiedIdentifierListTreeImpl> toModuleNames = moduleNames.get();
+      toKeyword = toModuleNames.first();
+      quialifiedModuleNames = toModuleNames.second();
+    }
+    return new OpensDirectiveTreeImpl(opensKeyword, packageName, toKeyword, quialifiedModuleNames, semicolonToken);
+  }
+
+  public <T, U> Tuple<T, U> newModuleNames2(T toToken, U moduleNames) {
     return newTuple(toToken, moduleNames);
   }
 

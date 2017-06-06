@@ -642,6 +642,13 @@ public interface Tree {
     EXPORTS_DIRECTIVE(ExportsDirectiveTree.class),
 
     /**
+     * {@link OpensDirectiveTree}
+     *
+     * @since Java 9
+     */
+    OPENS_DIRECTIVE(OpensDirectiveTree.class),
+
+    /**
      * {@link ArrayDimensionTree}
      */
     ARRAY_DIMENSION(ArrayDimensionTree.class),
