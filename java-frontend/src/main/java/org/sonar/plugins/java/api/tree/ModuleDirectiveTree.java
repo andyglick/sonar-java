@@ -21,37 +21,18 @@ package org.sonar.plugins.java.api.tree;
 
 import com.google.common.annotations.Beta;
 
-import javax.annotation.Nullable;
-
-import java.util.List;
-
 /**
- * Module declaration.
- *
+ * Common interface for all the module directives
+ * 
  * JLS9 - §7.7
  *
- * <pre>
- *   {@link #annotations()} module {@link #moduleName()} { {@link #moduleDirectives() } }
- *   {@link #annotations()} open module {@link #moduleName()} { {@link #moduleDirectives() } }
- * </pre>
- * 
  * @since Java 9
  */
 @Beta
-public interface ModuleDeclarationTree extends Tree {
+public interface ModuleDirectiveTree extends Tree {
 
-  List<AnnotationTree> annotations();
+  SyntaxToken directiveKeyword();
 
-  @Nullable
-  SyntaxToken openKeyword();
+  SyntaxToken semicolonToken();
 
-  SyntaxToken moduleKeyword();
-
-  ExpressionTree moduleName();
-
-  SyntaxToken openBraceToken();
-
-  List<ModuleDirectiveTree> moduleDirectives();
-
-  SyntaxToken closeBraceToken();
 }

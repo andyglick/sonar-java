@@ -26,6 +26,7 @@ import org.sonar.java.model.JavaTree;
 import org.sonar.plugins.java.api.tree.AnnotationTree;
 import org.sonar.plugins.java.api.tree.ExpressionTree;
 import org.sonar.plugins.java.api.tree.ModuleDeclarationTree;
+import org.sonar.plugins.java.api.tree.ModuleDirectiveTree;
 import org.sonar.plugins.java.api.tree.SyntaxToken;
 import org.sonar.plugins.java.api.tree.Tree;
 import org.sonar.plugins.java.api.tree.TreeVisitor;
@@ -41,11 +42,11 @@ public class ModuleDeclarationTreeImpl extends JavaTree implements ModuleDeclara
   private final InternalSyntaxToken moduleKeyword;
   private final ExpressionTree qualifiedIdentifier;
   private final InternalSyntaxToken openBraceToken;
-  private final List<Tree> moduleDirectives;
+  private final List<ModuleDirectiveTree> moduleDirectives;
   private final InternalSyntaxToken closeBraceToken;
 
   public ModuleDeclarationTreeImpl(List<AnnotationTree> annotations, InternalSyntaxToken openKeyword, InternalSyntaxToken moduleKeyword, ExpressionTree qualifiedIdentifier,
-    InternalSyntaxToken openBraceToken, List<Tree> moduleDirectives, InternalSyntaxToken closeBraceToken) {
+    InternalSyntaxToken openBraceToken, List<ModuleDirectiveTree> moduleDirectives, InternalSyntaxToken closeBraceToken) {
     super(Tree.Kind.MODULE);
     this.annotations = annotations;
     this.openKeyword = openKeyword;
@@ -93,7 +94,7 @@ public class ModuleDeclarationTreeImpl extends JavaTree implements ModuleDeclara
   }
 
   @Override
-  public List<Tree> moduleDirectives() {
+  public List<ModuleDirectiveTree> moduleDirectives() {
     return moduleDirectives;
   }
 
