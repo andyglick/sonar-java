@@ -42,6 +42,7 @@ import org.sonar.java.model.TypeParameterTreeImpl;
 import org.sonar.java.model.declaration.AnnotationTreeImpl;
 import org.sonar.java.model.declaration.ClassTreeImpl;
 import org.sonar.java.model.declaration.EnumConstantTreeImpl;
+import org.sonar.java.model.declaration.ExportsDirectiveTreeImpl;
 import org.sonar.java.model.declaration.MethodTreeImpl;
 import org.sonar.java.model.declaration.ModifierKeywordTreeImpl;
 import org.sonar.java.model.declaration.ModifiersTreeImpl;
@@ -208,6 +209,22 @@ public class TreeFactory {
   public ModuleDirectiveTree newRequiresModuleDirective(InternalSyntaxToken requiresToken, ModifiersTreeImpl modifiers, ExpressionTree moduleName,
     InternalSyntaxToken semicolonToken) {
     return new RequiresDirectiveTreeImpl(requiresToken, modifiers, moduleName, semicolonToken);
+  }
+
+  public ModuleDirectiveTree newExportsModuleDirective(InternalSyntaxToken exportsKeyword, ExpressionTree packageName,
+    Optional<Tuple<InternalSyntaxToken, QualifiedIdentifierListTreeImpl>> moduleNames, InternalSyntaxToken semicolonToken) {
+    InternalSyntaxToken toKeyword = null;
+    ListTreeImpl<TypeTree> quialifiedModuleNames = QualifiedIdentifierListTreeImpl.emptyList();
+    if (moduleNames.isPresent()) {
+      Tuple<InternalSyntaxToken, QualifiedIdentifierListTreeImpl> toModuleNames = moduleNames.get();
+      toKeyword = toModuleNames.first();
+      quialifiedModuleNames = toModuleNames.second();
+    }
+    return new ExportsDirectiveTreeImpl(exportsKeyword, packageName, toKeyword, quialifiedModuleNames, semicolonToken);
+  }
+
+  public <T, U> Tuple<T, U> newModuleNames(T toToken, U moduleNames) {
+    return newTuple(toToken, moduleNames);
   }
 
   public ImportClauseTree newEmptyImport(InternalSyntaxToken semicolonToken) {

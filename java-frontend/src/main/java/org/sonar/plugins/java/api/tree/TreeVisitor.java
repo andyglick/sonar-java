@@ -20,6 +20,7 @@
 package org.sonar.plugins.java.api.tree;
 
 import com.google.common.annotations.Beta;
+
 import org.sonar.java.model.expression.TypeArgumentListTreeImpl;
 
 /**
@@ -139,6 +140,8 @@ public interface TreeVisitor {
   void visitModule(ModuleDeclarationTree module);
 
   void visitRequiresDirectiveTree(RequiresDirectiveTree tree);
+
+  void visitExportsDirectiveTree(ExportsDirectiveTree tree);
 
   void visitArrayDimension(ArrayDimensionTree tree);
 }
